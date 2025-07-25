@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro de Bomberos</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css">
+
+  <a href="{{ url_for('buscar_cursos') }}" class="btn btn-info mb-4">Buscar bomberos por curso</a>
+  <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary float-end">Cerrar sesión</a>
+
+</head>
+<body class="container py-5">
+  <h1 class="mb-4">Registrar Bombero</h1>
+  <form action="/guardar" method="POST" enctype="multipart/form-data" class="mb-5">
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <input
+          type="text"
+          name="nombre"
+          class="form-control"
+          placeholder="Nombre"
+          required
+        />
+      </div>
+      <div class="col-md-6">
+        <input
+          type="text"
+          name="apellido"
+          class="form-control"
+          placeholder="Apellido"
+          required
+        />
+      </div>
+    </div>
+
+<div id="cursos">
+  <div class="row g-3 mb-2">
+    <div class="col-md-6">
+      <input
+        type="text"
+        name="curso[]"
+        list="lista-cursos"
+        class="form-control"
+        placeholder="Nombre del curso"
+        required
+      />
+      <datalist id="lista-cursos">
+        {% for curso in cursos_existentes %}
+          <option value="{{ curso.nombre }}"></option>
+        {% endfor %}
+      </datalist>
+    </div>
+    <div class="col-md-6">
+      <input type="file" name="archivo[]" class="form-control" />
+    </div>
+  </div>
+</div>
+
+
+    <button
+      type="button"
+      class="btn btn-secondary mb-3"
+      onclick="agregarCurso()"
+    >
+      Agregar otro curso
+    </button>
+    <button type="submit" class="btn btn-primary mb-3">Registrar</button>
+  </form>
+
+  <h2>Bomberos registrados</h2>
+  <ul class="list-group">
+    {% for bombero in bomberos %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{{ url_for('detalle', id=bombero.id) }}">
+        {{ bombero.nombre }} {{ bombero.apellido }}
+      </a>
+      <form action="{{ url_for('eliminar_bombero', bombero_id=bombero.id) }}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este bombero y todos sus cursos?');" style="margin:0;">
+        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+      </form>
+    </li>
+    {% else %}
+    <li class="list-group-item">No hay bomberos registrados aún.</li>
+    {% endfor %}
+  </ul>
+
+<script>
+  function agregarCurso() {
+    const div = document.createElement("div");
+    div.classList.add("row", "g-3", "mb-2");
+    div.innerHTML = `
+      <div class="col-md-6">
+        <input
+          type="text"
+          name="curso[]"
+          list="lista-cursos"
+          class="form-control"
+          placeholder="Nombre del curso"
+          required
+        />
+      </div>
+      <div class="col-md-6">
+        <input type="file" name="archivo[]" class="form-control" />
+      </div>
+    `;
+    document.getElementById("cursos").appendChild(div);
+  }
+</script>
+
+
+</body>
+</html>

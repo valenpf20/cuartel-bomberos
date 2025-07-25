@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buscar Cursos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="container py-5">
+  <h1>Buscar bomberos por curso</h1>
+
+<form method="POST" class="mb-4">
+  <div class="input-group">
+    <input
+      type="text"
+      name="consulta"
+      class="form-control"
+      placeholder="Buscar curso..."
+      list="lista-cursos"
+      value="{{ consulta }}"
+    />
+    <button type="submit" class="btn btn-primary">Buscar</button>
+  </div>
+  <datalist id="lista-cursos">
+    {% for curso in cursos_existentes %}
+      <option value="{{ curso.nombre }}"></option>
+    {% endfor %}
+  </datalist>
+</form>
+
+
+  {% if resultados %}
+    <h2>Resultados para "{{ consulta }}":</h2>
+    <ul class="list-group">
+      {% for bombero in resultados %}
+        <li class="list-group-item">
+          <a href="{{ url_for('detalle', id=bombero.id) }}">{{ bombero.nombre }} {{ bombero.apellido }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% elif consulta %}
+    <p>No se encontraron bomberos con cursos que coincidan.</p>
+  {% endif %}
+
+  <a href="{{ url_for('index') }}" class="btn btn-secondary mt-4">Volver al inicio</a>
+</body>
+</html>

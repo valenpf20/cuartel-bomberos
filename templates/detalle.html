@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detalle de Bombero</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body class="container py-5">
+  <h1>{{ bombero.nombre }} {{ bombero.apellido }}</h1>
+
+  <h2 class="mt-4">Cursos</h2>
+  <ul class="list-group mb-4">
+    {% for curso in cursos %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{ curso.nombre }}
+      <div>
+        {% if curso.archivo %}
+        <a
+          class="btn btn-sm btn-success"
+          href="{{ url_for('uploaded_file', filename=curso.archivo | replace('uploads/', '')) }}"
+          target="_blank"
+          >Ver certificado</a
+        >
+        {% endif %}
+        <a
+          class="btn btn-sm btn-primary"
+          href="{{ url_for('editar_curso', curso_id=curso.id) }}"
+          >Editar</a
+        >
+        <a
+          class="btn btn-sm btn-danger"
+          href="{{ url_for('eliminar_curso', curso_id=curso.id, bombero_id=bombero.id) }}"
+          onclick="return confirm('¿Querés eliminar este curso?');"
+          >Eliminar</a
+        >
+      </div>
+    </li>
+    {% else %}
+    <li class="list-group-item">No hay cursos cargados.</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Agregar nuevo curso</h3>
+<form action="{{ url_for('guardar_curso', bombero_id=bombero.id) }}" method="POST" enctype="multipart/form-data">
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <input
+        type="text"
+        name="nombre"
+        list="lista-cursos"
+        class="form-control"
+        placeholder="Nombre del curso"
+        required
+      />
+      <datalist id="lista-cursos">
+        {% for curso in cursos_existentes %}
+          <option value="{{ curso.nombre }}"></option>
+        {% endfor %}
+      </datalist>
+    </div>
+    <div class="col-md-6">
+      <input type="file" name="archivo" class="form-control" />
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Agregar curso</button>
+</form>
+
+
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+</body>
+</html>
