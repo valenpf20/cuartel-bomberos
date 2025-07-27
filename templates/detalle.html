@@ -10,66 +10,43 @@
   />
 </head>
 <body class="container py-5">
-  <h1>{{ bombero.nombre }} {{ bombero.apellido }}</h1>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary mb-3">Volver</a>
+  <h1>{{ bombero[1] }} {{ bombero[2] }}</h1>
 
-  <h2 class="mt-4">Cursos</h2>
+  <h2>Cursos</h2>
   <ul class="list-group mb-4">
     {% for curso in cursos %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      {{ curso.nombre }}
-      <div>
-        {% if curso.archivo %}
-        <a
-          class="btn btn-sm btn-success"
-          href="{{ url_for('uploaded_file', filename=curso.archivo | replace('uploads/', '')) }}"
-          target="_blank"
-          >Ver certificado</a
-        >
-        {% endif %}
-        <a
-          class="btn btn-sm btn-primary"
-          href="{{ url_for('editar_curso', curso_id=curso.id) }}"
-          >Editar</a
-        >
-        <a
-          class="btn btn-sm btn-danger"
-          href="{{ url_for('eliminar_curso', curso_id=curso.id, bombero_id=bombero.id) }}"
-          onclick="return confirm('¿Querés eliminar este curso?');"
-          >Eliminar</a
-        >
-      </div>
-    </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ curso[2] }}
+        <div>
+          {% if curso[3] %}
+            <a href="{{ url_for('uploaded_file', filename=curso[3].split('/')[-1]) }}" target="_blank" class="btn btn-sm btn-info me-2">Ver Certificado</a>
+          {% endif %}
+          <a href="{{ url_for('editar_curso', curso_id=curso[0]) }}" class="btn btn-sm btn-warning me-2">Editar</a>
+          <a href="{{ url_for('eliminar_curso', curso_id=curso[0], bombero_id=bombero[0]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Eliminar este curso?')">Eliminar</a>
+        </div>
+      </li>
     {% else %}
-    <li class="list-group-item">No hay cursos cargados.</li>
+      <li class="list-group-item">No hay cursos cargados.</li>
     {% endfor %}
   </ul>
 
-  <h3>Agregar nuevo curso</h3>
-<form action="{{ url_for('guardar_curso', bombero_id=bombero.id) }}" method="POST" enctype="multipart/form-data">
-  <div class="row g-3 mb-3">
-    <div class="col-md-6">
-      <input
-        type="text"
-        name="nombre"
-        list="lista-cursos"
-        class="form-control"
-        placeholder="Nombre del curso"
-        required
-      />
-      <datalist id="lista-cursos">
-        {% for curso in cursos_existentes %}
-          <option value="{{ curso.nombre }}"></option>
-        {% endfor %}
-      </datalist>
+  <h3>Agregar curso</h3>
+  <form action="{{ url_for('guardar_curso', bombero_id=bombero[0]) }}" method="POST" enctype="multipart/form-data">
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <input type="text" name="nombre" list="lista-cursos" class="form-control" placeholder="Nombre del curso" required />
+        <datalist id="lista-cursos">
+          {% for curso in cursos_existentes %}
+            <option value="{{ curso[0] }}"></option>
+          {% endfor %}
+        </datalist>
+      </div>
+      <div class="col-md-6">
+        <input type="file" name="archivo" class="form-control" />
+      </div>
     </div>
-    <div class="col-md-6">
-      <input type="file" name="archivo" class="form-control" />
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary">Agregar curso</button>
-</form>
-
-
-  <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    <button type="submit" class="btn btn-primary">Agregar curso</button>
+  </form>
 </body>
 </html>

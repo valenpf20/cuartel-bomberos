@@ -4,16 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Registro de Bomberos</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css">
-
-  <a href="{{ url_for('buscar_cursos') }}" class="btn btn-info mb-4">Buscar bomberos por curso</a>
-  <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary float-end">Cerrar sesión</a>
-
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 </head>
 <body class="container py-5">
-    <p class="alert alert-primary text-center">BIENVENIDO AL SISTEMA DE GESTION DE CURSOS DE BOMBEROS VOLUNTARIOS DE CHASCOMÚS!</p>
+  <a href="{{ url_for('logout') }}" class="btn btn-warning mb-4 float-end">Cerrar sesión</a>
   <h1 class="mb-4">Registrar Bombero</h1>
-  <form action="/guardar" method="POST" enctype="multipart/form-data" class="mb-5">
+
+  <a href="{{ url_for('buscar_cursos') }}" class="btn btn-info mb-4">Buscar bomberos por curso</a>
+
+  <form action="{{ url_for('guardar') }}" method="POST" enctype="multipart/form-data" class="mb-5">
     <div class="row g-3 mb-3">
       <div class="col-md-6">
         <input
@@ -35,29 +37,28 @@
       </div>
     </div>
 
-<div id="cursos">
-  <div class="row g-3 mb-2">
-    <div class="col-md-6">
-      <input
-        type="text"
-        name="curso[]"
-        list="lista-cursos"
-        class="form-control"
-        placeholder="Nombre del curso"
-        required
-      />
-      <datalist id="lista-cursos">
-        {% for curso in cursos_existentes %}
-          <option value="{{ curso.nombre }}"></option>
-        {% endfor %}
-      </datalist>
+    <div id="cursos">
+      <div class="row g-3 mb-2">
+        <div class="col-md-6">
+          <input
+            type="text"
+            name="curso[]"
+            list="lista-cursos"
+            class="form-control"
+            placeholder="Nombre del curso"
+            required
+          />
+          <datalist id="lista-cursos">
+            {% for curso in cursos_existentes %}
+              <option value="{{ curso[0] }}"></option>
+            {% endfor %}
+          </datalist>
+        </div>
+        <div class="col-md-6">
+          <input type="file" name="archivo[]" class="form-control" />
+        </div>
+      </div>
     </div>
-    <div class="col-md-6">
-      <input type="file" name="archivo[]" class="form-control" />
-    </div>
-  </div>
-</div>
-
 
     <button
       type="button"
@@ -72,42 +73,33 @@
   <h2>Bomberos registrados</h2>
   <ul class="list-group">
     {% for bombero in bomberos %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{{ url_for('detalle', id=bombero.id) }}">
-        {{ bombero.nombre }} {{ bombero.apellido }}
-      </a>
-      <form action="{{ url_for('eliminar_bombero', bombero_id=bombero.id) }}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este bombero y todos sus cursos?');" style="margin:0;">
-        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-      </form>
-    </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{{ url_for('detalle', id=bombero[0]) }}">
+          {{ bombero[1] }} {{ bombero[2] }}
+        </a>
+        <form action="{{ url_for('eliminar_bombero', bombero_id=bombero[0]) }}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este bombero y todos sus cursos?');" style="margin:0;">
+          <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+        </form>
+      </li>
     {% else %}
-    <li class="list-group-item">No hay bomberos registrados aún.</li>
+      <li class="list-group-item">No hay bomberos registrados aún.</li>
     {% endfor %}
   </ul>
 
-<script>
-  function agregarCurso() {
-    const div = document.createElement("div");
-    div.classList.add("row", "g-3", "mb-2");
-    div.innerHTML = `
-      <div class="col-md-6">
-        <input
-          type="text"
-          name="curso[]"
-          list="lista-cursos"
-          class="form-control"
-          placeholder="Nombre del curso"
-          required
-        />
-      </div>
-      <div class="col-md-6">
-        <input type="file" name="archivo[]" class="form-control" />
-      </div>
-    `;
-    document.getElementById("cursos").appendChild(div);
-  }
-</script>
-
-
+  <script>
+    function agregarCurso() {
+      const div = document.createElement("div");
+      div.classList.add("row", "g-3", "mb-2");
+      div.innerHTML = `
+        <div class="col-md-6">
+          <input type="text" name="curso[]" list="lista-cursos" class="form-control" placeholder="Nombre del curso" required />
+        </div>
+        <div class="col-md-6">
+          <input type="file" name="archivo[]" class="form-control" />
+        </div>
+      `;
+      document.getElementById("cursos").appendChild(div);
+    }
+  </script>
 </body>
 </html>
